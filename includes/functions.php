@@ -129,6 +129,9 @@ function create_ticket($pdo, $nama, $email, $kategori, $paket_hari = '2-Day Pass
             'kode' => $kode_pembayaran
         ]);
         if ($success) {
+            if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+                return $pdo->lastInsertId('pendaftaran_tiket_id_tiket_seq');
+            }
             return $pdo->lastInsertId();
         }
         return false;
