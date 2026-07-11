@@ -446,13 +446,25 @@ include_once 'includes/header.php';
                         
                         <div class="text-center pt-2">
                             <?php if ($ticket_found['status_pembayaran'] === 'Lunas'): ?>
-                                <div class="ticket-barcode mb-2">
-                                    ||||| | |||| ||| ||| ||| <?php echo htmlspecialchars($ticket_found['kode_pembayaran']); ?>
+                                <?php 
+                                $ticket_code = 'ADF-' . str_pad($ticket_found['id_tiket'], 5, '0', STR_PAD_LEFT);
+                                $qr_data = "TICKET_ID: " . $ticket_code . "\n"
+                                         . "CODE: " . $ticket_found['kode_pembayaran'] . "\n"
+                                         . "NAME: " . $ticket_found['nama_pemesan'] . "\n"
+                                         . "CATEGORY: " . $ticket_found['kategori_tiket'] . "\n"
+                                         . "DAY: " . $ticket_found['paket_hari'];
+                                $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qr_data);
+                                ?>
+                                <div class="mb-3 d-inline-block p-2 bg-white border rounded-3 shadow-sm">
+                                    <img src="<?php echo $qr_url; ?>" alt="QR Code E-Ticket" class="img-fluid" style="width: 130px; height: 130px; display: block;">
                                 </div>
-                                <p class="text-muted mb-0" style="font-size: 0.75rem;">Harap tidak membagikan barcode tiket ini kepada orang lain.</p>
+                                <div class="fw-bold text-slate-800 mb-1" style="font-size: 0.9rem; letter-spacing: 0.5px;">
+                                    KODE TIKET: <?php echo htmlspecialchars($ticket_found['kode_pembayaran']); ?>
+                                </div>
+                                <p class="text-muted mb-0" style="font-size: 0.75rem;">Scan QR Code di atas saat memasuki gerbang festival musik.</p>
                             <?php elseif ($ticket_found['status_pembayaran'] === 'Pending'): ?>
                                 <div class="alert alert-warning py-2 mb-0" style="font-size: 0.8rem;">
-                                    <i class="fa-solid fa-lock me-1"></i> Barcode dikunci hingga pembayaran diselesaikan.
+                                    <i class="fa-solid fa-lock me-1"></i> QR Code dikunci hingga pembayaran diselesaikan.
                                 </div>
                             <?php else: ?>
                                 <div class="alert alert-danger py-2 mb-0" style="font-size: 0.8rem;">

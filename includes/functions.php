@@ -369,6 +369,13 @@ function send_ticket_email($to_email, $nama, $ticket) {
         $formatted_price = number_format(get_ticket_price($ticket['kategori_tiket'], $ticket['paket_hari']), 0, ',', '.');
         $check_url = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php?email_search=" . urlencode($to_email) . "#cek-tiket";
         
+        $qr_data = "TICKET_ID: " . $ticket_no . "\n"
+                 . "CODE: " . $ticket['kode_pembayaran'] . "\n"
+                 . "NAME: " . $ticket['nama_pemesan'] . "\n"
+                 . "CATEGORY: " . $ticket['kategori_tiket'] . "\n"
+                 . "DAY: " . $ticket['paket_hari'];
+        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($qr_data);
+        
         $mail->Body = '
         <div style="font-family: \'Outfit\', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
             <div style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color: white; padding: 40px 20px; text-align: center;">
@@ -406,13 +413,18 @@ function send_ticket_email($to_email, $nama, $ticket) {
                 </div>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="' . $check_url . '" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; text-decoration: none; padding: 12px 30px; font-weight: bold; border-radius: 8px; display: inline-block;">
-                        Lihat & Cetak E-Ticket
-                    </a>
+                    <div style="margin-bottom: 20px; display: inline-block; padding: 10px; background-color: white; border: 1px solid #cbd5e1; border-radius: 8px;">
+                        <img src="' . $qr_url . '" alt="QR Code E-Ticket" style="width: 130px; height: 130px; display: block;" />
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <a href="' . $check_url . '" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; text-decoration: none; padding: 12px 30px; font-weight: bold; border-radius: 8px; display: inline-block;">
+                            Lihat & Cetak E-Ticket
+                        </a>
+                    </div>
                 </div>
                 
                 <p style="font-size: 13px; color: #64748b; text-align: center; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                    Harap simpan email ini dengan baik. Jangan bagikan barcode atau nomor tiket Anda kepada orang lain.<br>
+                    Harap simpan email ini dengan baik. Jangan bagikan QR Code atau nomor tiket Anda kepada orang lain.<br>
                     <strong>Sampai jumpa di AidFest 2026!</strong>
                 </p>
             </div>

@@ -146,7 +146,7 @@ Untuk login ke halaman administrator (`http://localhost/Webkali/admin/login.php`
    * Lakukan pemesanan tiket baru di menu **Pesan Tiket**. Tunjukkan interaksi ketika memilih **VVIP** yang secara otomatis mengunci hari ke **2-Day Pass**.
    * Isi form dengan nama dan email baru, kemudian submit.
    * Anda akan masuk ke halaman **Checkout Pembayaran**. Pilih metode pembayaran, lalu selesaikan transaksi dengan menekan **Bayar Sekarang**.
-   * Tunjukkan bahwa E-Ticket virtual langsung aktif dengan status **Lunas**, lengkap dengan kode transaksi acak, barcode, dan tombol cetak.
+   * Tunjukkan bahwa E-Ticket virtual langsung aktif dengan status **Lunas**, lengkap dengan kode transaksi acak, QR Code dinamis untuk scan masuk, dan tombol cetak.
 3. **Demo Sisi Administrator:**
    * Jelaskan bahwa link login sengaja disembunyikan dari navbar untuk meningkatkan keamanan web.
    * Lakukan **Double-Click (Klik 2 Kali)** pada logo CD berputar di navbar untuk membuka halaman login admin secara ajaib!
@@ -155,3 +155,64 @@ Untuk login ke halaman administrator (`http://localhost/Webkali/admin/login.php`
    * Lakukan pengujian CRUD: coba edit salah satu data tiket pendaftar (misal mengubah status pembayaran atau kategori) dan hapus satu data tiket pendaftar menggunakan tombol aksi interaktif.
    * Tunjukkan fungsionalitas fitur **Pencarian Data** yang dapat menyaring data di tabel admin secara instan.
 4. **Penutup:** Jelaskan mengenai kebersihan struktur kode (*clean code*) dengan dokumentasi ini.
+
+---
+
+## 8. Panduan Membuat Email Bisnis Custom Domain (`no-reply@domainanda.com`)
+
+Jika Anda ingin E-Ticket dikirim menggunakan email profesional dengan nama domain sendiri (seperti `no-reply@aidfest.com`), berikut adalah langkah-langkah lengkap untuk membuat akun email tersebut di hosting dan mengaturnya di sistem website:
+
+### Langkah 1: Buat Akun Email Baru di Hosting (Hostinger / cPanel)
+1. Masuk ke **hPanel Hostinger** atau **cPanel** hosting Anda.
+2. Cari menu **Email Accounts** (Akun Email) atau **Emails**.
+3. Klik tombol **Create** (Buat) atau **Add Email Account**.
+4. Isi data sebagai berikut:
+   * **Email Address / Username:** `no-reply`
+   * **Domain:** Pilih nama domain Anda (misal `aidfest.com` atau domain aktif milik Anda).
+   * **Password:** Buat kata sandi baru yang kuat.
+5. Klik tombol **Create / Buat**.
+
+### Langkah 2: Dapatkan Informasi Host & Port SMTP Hosting
+1. Setelah akun email berhasil dibuat, klik tombol **Connect Devices** atau **Set Up Mail Client** di samping nama email tersebut.
+2. Cari dan catat detail informasi **SMTP Manual Configuration** (Pengaturan SMTP Manual). Informasi yang Anda butuhkan biasanya berupa:
+   * **SMTP Host / Server:** (contoh: `smtp.hostinger.com` atau `mail.domainanda.com`)
+   * **SMTP Port:** `465` (untuk enkripsi SSL) atau `587` (untuk enkripsi TLS)
+   * **SSL/TLS Mode:** `ssl` atau `tls`
+
+### Langkah 3: Konfigurasi File Program di Website
+Buka berkas konfigurasi **[config/mail.php](file:///c:/xampp/htdocs/Webkali/config/mail.php)** di web AidFest, lalu sesuaikan isinya dengan detail SMTP email bisnis Anda yang baru:
+
+```php
+return [
+    'mail_enabled' => true, 
+
+    // Konfigurasi Server SMTP Hosting Baru Anda
+    'smtp_host'     => 'smtp.hostinger.com',       // Ganti dengan SMTP Host Anda
+    'smtp_port'     => 465,                        // Ganti ke 465 (SSL) atau 587 (TLS)
+    'smtp_secure'   => 'ssl',                      // Ganti ke 'ssl' atau 'tls'
+    'smtp_user'     => 'no-reply@domainanda.com',  // Email bisnis baru Anda
+    'smtp_pass'     => 'PASSWORD_EMAIL_BISNIS_ANDA', // Password email bisnis Anda
+
+    // Pengaturan Pengirim
+    'from_email'    => 'no-reply@domainanda.com',  // Samakan dengan smtp_user Anda
+    'from_name'     => 'AidFest 2026 E-Ticket Support',
+];
+```
+
+### Langkah 4: Tambahkan DNS Record untuk Mencegah Email Masuk Folder Spam (Penting!)
+Agar email yang dikirim dari domain bisnis Anda tidak dicurigai sebagai spam/phishing oleh Yahoo, Gmail, dll., tambahkan **DNS Record** berikut pada domain manager Anda (misalnya di Cloudflare, Hostinger DNS, atau cPanel DNS Zone Editor):
+
+1. **SPF Record (TXT):**
+   * **Type:** `TXT`
+   * **Name / Host:** `@`
+   * **Value:** `v=spf1 include:_spf.mail.hostinger.com ~all` (Sesuaikan bagian `include` dengan anjuran provider hosting email Anda).
+2. **DKIM Record (TXT):**
+   * Cari menu **DKIM** di email hosting Anda untuk mendapatkan kode kunci unik.
+   * **Type:** `TXT`
+   * **Name / Host:** `default._domainkey` (atau sesuai petunjuk hosting Anda).
+   * **Value:** Masukkan string panjang kode kunci DKIM yang Anda salin dari hosting.
+3. **DMARC Record (TXT):**
+   * **Type:** `TXT`
+   * **Name / Host:** `_dmarc`
+   * **Value:** `v=DMARC1; p=none; rua=mailto:admin@domainanda.com`
+
