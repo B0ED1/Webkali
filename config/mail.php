@@ -6,14 +6,14 @@ return [
     // Ganti ke true untuk mengaktifkan pengiriman email asli ke internet
     'mail_enabled' => true, 
 
-    // Konfigurasi Server SMTP (Contoh di bawah menggunakan Mailtrap)
-    'smtp_host'     => 'sandbox.smtp.mailtrap.io', // Gunakan 'smtp.gmail.com' untuk Gmail
-    'smtp_port'     => 2525,                       // Gunakan 587 untuk TLS Gmail
-    'smtp_secure'   => 'tls',                      // 'tls' (rekomendasi) atau 'ssl'
-    'smtp_user'     => 'MASUKKAN_USERNAME_SMTP_ANDA',
-    'smtp_pass'     => 'MASUKKAN_PASSWORD_SMTP_ANDA',
+    // Konfigurasi Server SMTP untuk Gmail SMTP
+    'smtp_host'     => 'smtp.gmail.com',           // Host SMTP Gmail
+    'smtp_port'     => 587,                        // Port TLS Gmail
+    'smtp_secure'   => 'tls',                      // Jenis enkripsi
+    'smtp_user'     => 'budiarif396@gmail.com', 
+    'smtp_pass'     => 'qawlmxakhxbeefqa',
 
     // Pengaturan Pengirim
-    'from_email'    => 'no-reply@aidfest.com',
+    'from_email'    => 'budiarif396@gmail.com',
     'from_name'     => 'AidFest 2026 E-Ticket Support',
 ];
