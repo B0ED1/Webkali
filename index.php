@@ -500,6 +500,8 @@ function downloadTicketPDF() {
         html2canvas:  { 
             scale: 2, 
             useCORS: true,
+            scrollX: 0,
+            scrollY: 0,
             backgroundColor: '#ffffff'
         },
         jsPDF:        { unit: 'in', format: 'a5', orientation: 'portrait' }
@@ -511,6 +513,23 @@ function downloadTicketPDF() {
     });
 }
 </script>
+
+<?php if (isset($_SESSION['send_email_id'])): ?>
+<!-- Pemicu Asinkron Kirim Email E-Ticket di Background -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('send_email_async.php?id=<?php echo $_SESSION['send_email_id']; ?>')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Async Email Dispatch:', data);
+        })
+        .catch(err => {
+            console.error('Async Email Error:', err);
+        });
+});
+</script>
+<?php unset($_SESSION['send_email_id']); ?>
+<?php endif; ?>
 
 <?php
 // Load Footer Global

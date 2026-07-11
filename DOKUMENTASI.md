@@ -106,8 +106,8 @@ Saat mempresentasikan aplikasi ini di depan penguji/dosen, berikut adalah poin p
    Untuk menjaga keamanan, tombol "Login Admin" sengaja dihilangkan dari menu navigasi utama agar tidak diklik oleh pengunjung biasa. Namun, admin dapat mengakses halaman login dengan cara **klik dua kali (double-click) pada logo CD atau nama "AidFest" di navbar**. Logika relative path di JavaScript memastikan fitur ini bekerja di domain hosting mana pun.
 6. **Simulasi Gerbang Pembayaran Realistis (Payment Gateway UI):**
    Layar pembayaran di [payment.php](file:///c:/xampp/htdocs/Webkali/payment.php) dirancang mirip dengan alur pembayaran asli (seperti Midtrans/Xendit). Menampilkan timer hitung mundur (10 menit), QRIS QR Code dinamis jika memilih e-wallet (GoPay/DANA), atau nomor Virtual Account dengan tombol salin cepat untuk transfer bank. Tombol "Konfirmasi Pembayaran" memicu simulasi verifikasi status (spinner loader bank) sebelum akhirnya mengubah status menjadi Lunas.
-7. **Pengiriman Email E-Ticket Otomatis (PHPMailer):**
-   Sistem terintegrasi dengan PHPMailer untuk mengirimkan email pemberitahuan E-Ticket asli ke email pembeli. Konfigurasi SMTP diletakkan di [config/mail.php](file:///c:/xampp/htdocs/Webkali/config/mail.php). Jika dinonaktifkan (`mail_enabled => false`), sistem akan mengalihkan output ke file log simulasi lokal di `scratch/mail_sim_log.txt` agar mudah diuji secara offline di localhost.
+7. **Pengiriman Email E-Ticket Asinkron (Asynchronous Background Mail Dispatch):**
+   Untuk mencegah halaman checkout mengalami loading lama (yang disebabkan oleh latensi koneksi SMTP Gmail jika dikirim secara sinkron), sistem kini menggunakan pendekatan asinkron. Setelah status pembayaran diubah menjadi *Lunas*, browser akan langsung dialihkan ke halaman E-Ticket **seketika** (<0.5 detik). Halaman tiket kemudian memicu pemanggilan skrip background [send_email_async.php](file:///c:/xampp/htdocs/Webkali/send_email_async.php) menggunakan API JavaScript `fetch()`. Pendekatan ini menjamin pengalaman pengguna (UX) yang sangat cepat dan responsif di server hosting mana pun tanpa terpengaruh oleh latensi server SMTP pengirim.
 
 ---
 

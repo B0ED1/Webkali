@@ -55,14 +55,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_simulation'])
             unset($_SESSION['last_booking_id']);
         }
         
-        // Ambil data terbaru untuk email
+        // Ambil data terbaru
         $updated_ticket = get_ticket_by_id($pdo, $id);
+        $email_address = $updated_ticket ? $updated_ticket['email'] : $ticket['email'];
+        $kategori_tiket = $updated_ticket ? $updated_ticket['kategori_tiket'] : $ticket['kategori_tiket'];
+
+        // Set session ID agar halaman index.php memicu kirim email asinkron di latar belakang
+        $_SESSION['send_email_id'] = $id;
         
-        // Kirim email konfirmasi asli atau logs
-        send_ticket_email($updated_ticket['email'], $updated_ticket['nama_pemesan'], $updated_ticket);
-        
-        $_SESSION['success'] = "Pembayaran sukses! E-Ticket Anda untuk kategori <strong>" . $updated_ticket['kategori_tiket'] . "</strong> kini aktif dan salinannya telah dikirim ke email <strong>" . htmlspecialchars($updated_ticket['email']) . "</strong>.";
-        header("Location: index.php?email_search=" . urlencode($updated_ticket['email']) . "#cek-tiket");
+        $_SESSION['success'] = "Pembayaran sukses! E-Ticket Anda untuk kategori <strong>" . $kategori_tiket . "</strong> kini aktif dan salinannya akan segera dikirim ke email <strong>" . htmlspecialchars($email_address) . "</strong>.";
+        header("Location: index.php?email_search=" . urlencode($email_address) . "#cek-tiket");
         exit();
     } else {
         $error = "Terjadi kesalahan sistem saat memproses verifikasi. Silakan coba lagi.";
