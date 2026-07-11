@@ -100,8 +100,8 @@ Saat mempresentasikan aplikasi ini di depan penguji/dosen, berikut adalah poin p
    * Jumlah pendaftar per kategori tiket (Reguler, VIP, VVIP).
 3. **Logika Sinkronisasi Form VVIP (Dynamic Form UX):**
    Sesuai aturan bisnis, tiket VVIP hanya tersedia dalam bentuk *2-Day Pass* (Terusan). Di halaman pemesanan, JavaScript secara dinamis mendeteksi pilihan kategori. Jika VVIP dipilih, opsi harian (Day 1 / Day 2) akan langsung dinonaktifkan di frontend untuk mencegah kesalahan input pengguna sebelum diserahkan ke backend.
-4. **Desain E-Ticket Siap Cetak (Print Friendly CSS):**
-   E-Ticket virtual dilengkapi dengan barcode simulasi dan tata letak eksklusif. Ketika pembeli menekan tombol **"Cetak E-Ticket"**, stylesheet media cetak `@media print` akan menyembunyikan elemen navigasi, tombol, dan footer secara otomatis, menyisakan kartu tiket yang bersih dan presisi untuk dicetak atau disimpan sebagai PDF.
+4. **Unduh E-Ticket PDF Instan (Client-Side PDF Generation):**
+   E-Ticket virtual kini dapat langsung diunduh dalam bentuk file PDF secara otomatis menggunakan library `html2pdf.js` saat tombol **"Unduh E-Ticket (PDF)"** diklik. PDF dirancang dengan layout proporsional berukuran A5, menonaktifkan efek bayangan (*box shadow*) sementara saat proses konversi agar file bersih dari bayangan terpotong, dan siap dicetak atau disimpan oleh pembeli.
 5. **Akses Login Admin Tersembunyi (Easter Egg Security):**
    Untuk menjaga keamanan, tombol "Login Admin" sengaja dihilangkan dari menu navigasi utama agar tidak diklik oleh pengunjung biasa. Namun, admin dapat mengakses halaman login dengan cara **klik dua kali (double-click) pada logo CD atau nama "AidFest" di navbar**. Logika relative path di JavaScript memastikan fitur ini bekerja di domain hosting mana pun.
 6. **Simulasi Gerbang Pembayaran Realistis (Payment Gateway UI):**

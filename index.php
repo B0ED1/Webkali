@@ -369,7 +369,7 @@ include_once 'includes/header.php';
             
             <div class="col-12">
                 <!-- Virtual Ticket Card -->
-                <div class="ticket-virtual">
+                <div class="ticket-virtual" id="e-ticket-card">
                     <div class="ticket-header">
                         <div class="d-flex align-items-center justify-content-center mb-2">
                             <i class="fa-solid fa-compact-disc text-white me-2 fs-5"></i>
@@ -466,8 +466,8 @@ include_once 'includes/header.php';
             
             <div class="col-12 text-center mt-3 mb-5 no-print">
                 <?php if ($ticket_found['status_pembayaran'] === 'Lunas'): ?>
-                    <button onclick="window.print();" class="btn btn-premium-primary px-4 py-2">
-                        <i class="fa-solid fa-print me-2"></i>Cetak E-Ticket
+                    <button onclick="downloadTicketPDF();" class="btn btn-premium-primary px-4 py-2">
+                        <i class="fa-solid fa-download me-2"></i>Unduh E-Ticket (PDF)
                     </button>
                 <?php elseif ($ticket_found['status_pembayaran'] === 'Pending'): ?>
                     <a href="payment.php?id=<?php echo $ticket_found['id_tiket']; ?>" class="btn btn-warning px-4 py-2 fw-semibold">
@@ -482,6 +482,35 @@ include_once 'includes/header.php';
         </div>
     <?php endif; ?>
 </section>
+
+<!-- CDN html2pdf.js & Script Konversi PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+function downloadTicketPDF() {
+    const element = document.getElementById('e-ticket-card');
+    
+    // Hilangkan box shadow sementara agar PDF bersih dari bayangan abu-abu terpotong
+    const originalShadow = element.style.boxShadow;
+    element.style.boxShadow = 'none';
+
+    const opt = {
+        margin:       [0.15, 0.15, 0.15, 0.15],
+        filename:     'AidFest2026-ETicket-<?php echo isset($ticket_found) ? str_pad($ticket_found['id_tiket'], 5, '0', STR_PAD_LEFT) : "00000"; ?>.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { 
+            scale: 2, 
+            useCORS: true,
+            backgroundColor: '#ffffff'
+        },
+        jsPDF:        { unit: 'in', format: 'a5', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        // Kembalikan box-shadow setelah proses unduh selesai
+        element.style.boxShadow = originalShadow;
+    });
+}
+</script>
 
 <?php
 // Load Footer Global
