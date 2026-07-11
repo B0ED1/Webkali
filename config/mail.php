@@ -10,10 +10,10 @@ return [
     'smtp_host'     => 'smtp.gmail.com',           // Host SMTP Gmail
     'smtp_port'     => 587,                        // Port TLS Gmail
     'smtp_secure'   => 'tls',                      // Jenis enkripsi
-    'smtp_user'     => 'budiarif396@gmail.com', 
-    'smtp_pass'     => 'qawlmxakhxbeefqa',
+    'smtp_user'     => 'dankeras09@gmail.com', 
+    'smtp_pass'     => 'isfhpbjywylegevr',
 
     // Pengaturan Pengirim
-    'from_email'    => 'budiarif396@gmail.com',
+    'from_email'    => 'no-reply@aidfest.com',
     'from_name'     => 'AidFest 2026 E-Ticket Support',
 ];
