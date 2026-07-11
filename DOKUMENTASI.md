@@ -104,6 +104,10 @@ Saat mempresentasikan aplikasi ini di depan penguji/dosen, berikut adalah poin p
    E-Ticket virtual dilengkapi dengan barcode simulasi dan tata letak eksklusif. Ketika pembeli menekan tombol **"Cetak E-Ticket"**, stylesheet media cetak `@media print` akan menyembunyikan elemen navigasi, tombol, dan footer secara otomatis, menyisakan kartu tiket yang bersih dan presisi untuk dicetak atau disimpan sebagai PDF.
 5. **Akses Login Admin Tersembunyi (Easter Egg Security):**
    Untuk menjaga keamanan, tombol "Login Admin" sengaja dihilangkan dari menu navigasi utama agar tidak diklik oleh pengunjung biasa. Namun, admin dapat mengakses halaman login dengan cara **klik dua kali (double-click) pada logo CD atau nama "AidFest" di navbar**. Logika relative path di JavaScript memastikan fitur ini bekerja di domain hosting mana pun.
+6. **Simulasi Gerbang Pembayaran Realistis (Payment Gateway UI):**
+   Layar pembayaran di [payment.php](file:///c:/xampp/htdocs/Webkali/payment.php) dirancang mirip dengan alur pembayaran asli (seperti Midtrans/Xendit). Menampilkan timer hitung mundur (10 menit), QRIS QR Code dinamis jika memilih e-wallet (GoPay/DANA), atau nomor Virtual Account dengan tombol salin cepat untuk transfer bank. Tombol "Konfirmasi Pembayaran" memicu simulasi verifikasi status (spinner loader bank) sebelum akhirnya mengubah status menjadi Lunas.
+7. **Pengiriman Email E-Ticket Otomatis (PHPMailer):**
+   Sistem terintegrasi dengan PHPMailer untuk mengirimkan email pemberitahuan E-Ticket asli ke email pembeli. Konfigurasi SMTP diletakkan di [config/mail.php](file:///c:/xampp/htdocs/Webkali/config/mail.php). Jika dinonaktifkan (`mail_enabled => false`), sistem akan mengalihkan output ke file log simulasi lokal di `scratch/mail_sim_log.txt` agar mudah diuji secara offline di localhost.
 
 ---
 

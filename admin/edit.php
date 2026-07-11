@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
+        $previous_status = $ticket['status_pembayaran'];
         $kode_pembayaran = $ticket['kode_pembayaran'];
         if ($status_pembayaran === 'Lunas') {
             if (empty($kode_pembayaran)) {
@@ -85,6 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (update_ticket($pdo, $id, $nama_pemesan, $email, $kategori_tiket, $paket_hari, $status_pembayaran, $metode_pembayaran, $kode_pembayaran)) {
+            // Kirim email jika status pembayaran diubah ke Lunas oleh admin
+            if ($status_pembayaran === 'Lunas' && $previous_status !== 'Lunas') {
+                $updated_ticket = get_ticket_by_id($pdo, $id);
+                send_ticket_email($updated_ticket['email'], $updated_ticket['nama_pemesan'], $updated_ticket);
+            }
+            
             $_SESSION['success'] = "Data tiket atas nama <strong>" . htmlspecialchars($nama_pemesan) . "</strong> berhasil diperbarui!";
             header("Location: index.php");
             exit();

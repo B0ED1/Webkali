@@ -4,6 +4,10 @@
 // Memuat konfigurasi database
 require_once __DIR__ . '/../config/database.php';
 
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
 /**
  * Memeriksa apakah admin sudah login
  * @return bool
@@ -314,5 +318,121 @@ function format_tanggal_indo($dateStr) {
     $jam = date('H:i', $timestamp);
     
     return $hari[$numHari] . ", " . $tgl . " " . $bulan[$numBulan] . " " . $tahun . " - " . $jam . " WIB";
+}
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+/**
+ * Mengirimkan email konfirmasi E-Ticket kepada pembeli
+ * @param string $to_email
+ * @param string $nama
+ * @param array $ticket
+ * @return bool
+ */
+function send_ticket_email($to_email, $nama, $ticket) {
+    $mail_config_file = __DIR__ . '/../config/mail.php';
+    if (!file_exists($mail_config_file)) {
+        return false;
+    }
+    
+    $config = require $mail_config_file;
+    
+    if (!$config['mail_enabled']) {
+        $log_dir = __DIR__ . '/../scratch/';
+        if (!is_dir($log_dir)) {
+            mkdir($log_dir, 0777, true);
+        }
+        $log_content = "[" . date('Y-m-d H:i:s') . "] SIMULASI EMAIL DIKIRIM KE: $to_email\n";
+        $log_content .= "Nama: $nama\nTiket ID: #ADF-" . str_pad($ticket['id_tiket'], 5, '0', STR_PAD_LEFT) . "\nKategori: " . $ticket['kategori_tiket'] . "\nHari: " . $ticket['paket_hari'] . "\nKode Bayar: " . $ticket['kode_pembayaran'] . "\n=========================================\n";
+        file_put_contents($log_dir . 'mail_sim_log.txt', $log_content, FILE_APPEND);
+        return true;
+    }
+    
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host       = $config['smtp_host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $config['smtp_user'];
+        $mail->Password   = $config['smtp_pass'];
+        $mail->SMTPSecure = $config['smtp_secure'] === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = $config['smtp_port'];
+        $mail->CharSet    = 'UTF-8';
+        
+        $mail->setFrom($config['from_email'], $config['from_name']);
+        $mail->addAddress($to_email, $nama);
+        
+        $mail->isHTML(true);
+        $mail->Subject = 'E-Ticket Konfirmasi AidFest 2026 #' . str_pad($ticket['id_tiket'], 5, '0', STR_PAD_LEFT);
+        
+        $ticket_no = '#ADF-' . str_pad($ticket['id_tiket'], 5, '0', STR_PAD_LEFT);
+        $formatted_price = number_format(get_ticket_price($ticket['kategori_tiket'], $ticket['paket_hari']), 0, ',', '.');
+        $check_url = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']) . "/index.php?email_search=" . urlencode($to_email) . "#cek-tiket";
+        
+        $mail->Body = '
+        <div style="font-family: \'Outfit\', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color: white; padding: 40px 20px; text-align: center;">
+                <h1 style="margin: 0; font-size: 28px; font-weight: 800;">AidFest 2026</h1>
+                <p style="margin: 10px 0 0 0; color: #a5b4fc; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">E-Ticket Resmi Anda Telah Aktif</p>
+            </div>
+            <div style="padding: 30px; background-color: white;">
+                <p style="margin-top: 0; font-size: 16px; color: #334155;">Halo <strong>' . htmlspecialchars($nama) . '</strong>,</p>
+                <p style="font-size: 14px; color: #475569; line-height: 1.6;">Terima kasih telah menyelesaikan pembayaran. Pendaftaran tiket Anda untuk **AidFest 2026** telah berhasil diverifikasi dan berstatus **Lunas**.</p>
+                
+                <div style="background-color: #f1f5f9; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 25px; margin-top: 25px;">
+                    <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px;">Detail E-Ticket</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <tr>
+                            <td style="padding: 6px 0; color: #64748b;">Nomor Tiket:</td>
+                            <td style="padding: 6px 0; text-align: right; font-weight: bold; color: #4f46e5;">' . $ticket_no . '</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #64748b;">Kategori Tiket:</td>
+                            <td style="padding: 6px 0; text-align: right; font-weight: bold;">' . htmlspecialchars($ticket['kategori_tiket']) . '</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #64748b;">Pilihan Hari:</td>
+                            <td style="padding: 6px 0; text-align: right; font-weight: bold;">' . htmlspecialchars($ticket['paket_hari']) . '</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #64748b;">Kode Transaksi:</td>
+                            <td style="padding: 6px 0; text-align: right; font-family: monospace;">' . htmlspecialchars($ticket['kode_pembayaran']) . '</td>
+                        </tr>
+                        <tr style="border-top: 1px dashed #cbd5e1;">
+                            <td style="padding: 12px 0 0 0; font-weight: bold;">Total Bayar:</td>
+                            <td style="padding: 12px 0 0 0; text-align: right; font-weight: bold; font-size: 16px; color: #4f46e5;">Rp ' . $formatted_price . '</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="' . $check_url . '" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; text-decoration: none; padding: 12px 30px; font-weight: bold; border-radius: 8px; display: inline-block;">
+                        Lihat & Cetak E-Ticket
+                    </a>
+                </div>
+                
+                <p style="font-size: 13px; color: #64748b; text-align: center; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                    Harap simpan email ini dengan baik. Jangan bagikan barcode atau nomor tiket Anda kepada orang lain.<br>
+                    <strong>Sampai jumpa di AidFest 2026!</strong>
+                </p>
+            </div>
+            <div style="background-color: #0f172a; color: #94a3b8; padding: 20px; text-align: center; font-size: 12px;">
+                © 2026 AidFest. Gelora Bung Karno, Jakarta, Indonesia.
+            </div>
+        </div>
+        ';
+        
+        $mail->AltBody = "Halo " . $nama . ",\n\nTerima kasih. Tiket Anda dengan nomor " . $ticket_no . " (" . $ticket['kategori_tiket'] . " - " . $ticket['paket_hari'] . ") telah berhasil dibayar (Lunas).\n\nTotal Bayar: Rp " . $formatted_price . "\n\nLihat E-Ticket Anda di: " . $check_url . "\n\nSampai jumpa di AidFest 2026!";
+        
+        return $mail->send();
+    } catch (Exception $e) {
+        $log_dir = __DIR__ . '/../scratch/';
+        if (!is_dir($log_dir)) {
+            mkdir($log_dir, 0777, true);
+        }
+        file_put_contents($log_dir . 'mail_error_log.txt', "[" . date('Y-m-d H:i:s') . "] Gagal kirim email ke $to_email. Error: " . $mail->ErrorInfo . "\n", FILE_APPEND);
+        return false;
+    }
 }
 ?>
