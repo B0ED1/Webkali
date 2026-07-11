@@ -1,6 +1,9 @@
 <?php
 // includes/functions.php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // Memuat konfigurasi database
 require_once __DIR__ . '/../config/database.php';
 
@@ -319,10 +322,6 @@ function format_tanggal_indo($dateStr) {
     
     return $hari[$numHari] . ", " . $tgl . " " . $bulan[$numBulan] . " " . $tahun . " - " . $jam . " WIB";
 }
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 /**
  * Mengirimkan email konfirmasi E-Ticket kepada pembeli
  * @param string $to_email
