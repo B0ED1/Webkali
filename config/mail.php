@@ -4,7 +4,7 @@
 
 return [
     // Ganti ke true untuk mengaktifkan pengiriman email asli ke internet
-    'mail_enabled' => false, 
+    'mail_enabled' => true, 
 
     // Konfigurasi Server SMTP (Contoh di bawah menggunakan Mailtrap)
     'smtp_host'     => 'sandbox.smtp.mailtrap.io', // Gunakan 'smtp.gmail.com' untuk Gmail
