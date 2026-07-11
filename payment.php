@@ -399,9 +399,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Tahap 3: Submit data ke database
                     setTimeout(() => {
                         formVerifikasi.submit();
-                    }, 1500);
-                }, 2000);
-            }, 1500);
+                    }, 500);
+                }, 800);
+            }, 500);
         });
     }
 });
