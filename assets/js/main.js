@@ -86,11 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePackageOptions();
     }
 
-    // Easter Egg: Double-click brand logo untuk login admin
-    const brandLogo = document.getElementById('nav-brand-logo');
-    if (brandLogo) {
-        brandLogo.addEventListener('dblclick', (e) => {
-            e.preventDefault();
+    // Easter Egg: Double-click logo brand di footer untuk login admin
+    const footerLogo = document.getElementById('footer-brand-logo');
+    if (footerLogo) {
+        footerLogo.addEventListener('dblclick', () => {
             const isAdminPath = window.location.pathname.includes('/admin/');
             if (isAdminPath) {
                 window.location.href = 'login.php';
@@ -99,4 +98,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Shortcut Keyboard: Ctrl + Shift + A untuk login admin
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+            e.preventDefault();
+            const isAdminPath = window.location.pathname.includes('/admin/');
+            if (isAdminPath) {
+                window.location.href = 'login.php';
+            } else {
+                window.location.href = 'admin/login.php';
+            }
+        }
+    });
 });

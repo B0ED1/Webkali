@@ -102,8 +102,10 @@ Saat mempresentasikan aplikasi ini di depan penguji/dosen, berikut adalah poin p
    Sesuai aturan bisnis, tiket VVIP hanya tersedia dalam bentuk *2-Day Pass* (Terusan). Di halaman pemesanan, JavaScript secara dinamis mendeteksi pilihan kategori. Jika VVIP dipilih, opsi harian (Day 1 / Day 2) akan langsung dinonaktifkan di frontend untuk mencegah kesalahan input pengguna sebelum diserahkan ke backend.
 4. **Unduh E-Ticket PDF Instan (Client-Side PDF Generation):**
    E-Ticket virtual kini dapat langsung diunduh dalam bentuk file PDF secara otomatis menggunakan library `html2pdf.js` saat tombol **"Unduh E-Ticket (PDF)"** diklik. PDF dirancang dengan layout proporsional berukuran A5, menonaktifkan efek bayangan (*box shadow*) sementara saat proses konversi agar file bersih dari bayangan terpotong, dan siap dicetak atau disimpan oleh pembeli.
-5. **Akses Login Admin Tersembunyi (Easter Egg Security):**
-   Untuk menjaga keamanan, tombol "Login Admin" sengaja dihilangkan dari menu navigasi utama agar tidak diklik oleh pengunjung biasa. Namun, admin dapat mengakses halaman login dengan cara **klik dua kali (double-click) pada logo CD atau nama "AidFest" di navbar**. Logika relative path di JavaScript memastikan fitur ini bekerja di domain hosting mana pun.
+5. **Akses Login Admin Tersembunyi (Easter Egg & Shortcut Security):**
+   Untuk menjaga keamanan, tombol "Login Admin" sengaja dihilangkan dari menu navigasi utama agar tidak diklik oleh pengunjung biasa. Admin dapat mengakses halaman login dengan 2 cara rahasia:
+   * **Double-click (Klik 2 Kali)** pada teks logo **"AidFest"** di bagian **Footer** (bukan di navbar, karena link navbar memicu reload halaman secara otomatis).
+   * Menekan kombinasi tombol keyboard **`Ctrl + Shift + A`** secara bersamaan dari halaman mana pun di situs web. Logika jalur dinamis JavaScript memastikan pengalihan berjalan mulus di hosting mana pun.
 6. **Simulasi Gerbang Pembayaran Realistis (Payment Gateway UI):**
    Layar pembayaran di [payment.php](file:///c:/xampp/htdocs/Webkali/payment.php) dirancang mirip dengan alur pembayaran asli (seperti Midtrans/Xendit). Menampilkan timer hitung mundur (10 menit), QRIS QR Code dinamis jika memilih e-wallet (GoPay/DANA), atau nomor Virtual Account dengan tombol salin cepat untuk transfer bank. Tombol "Konfirmasi Pembayaran" memicu simulasi verifikasi status (spinner loader bank) sebelum akhirnya mengubah status menjadi Lunas.
 7. **Pengiriman Email E-Ticket Asinkron (Asynchronous Background Mail Dispatch):**
@@ -149,7 +151,7 @@ Untuk login ke halaman administrator (`http://localhost/Webkali/admin/login.php`
    * Tunjukkan bahwa E-Ticket virtual langsung aktif dengan status **Lunas**, lengkap dengan kode transaksi acak, QR Code dinamis untuk scan masuk, dan tombol cetak.
 3. **Demo Sisi Administrator:**
    * Jelaskan bahwa link login sengaja disembunyikan dari navbar untuk meningkatkan keamanan web.
-   * Lakukan **Double-Click (Klik 2 Kali)** pada logo CD berputar di navbar untuk membuka halaman login admin secara ajaib!
+   * Lakukan **Double-Click (Klik 2 Kali)** pada logo brand **"AidFest"** di bagian **Footer** (atau gunakan shortcut **`Ctrl + Shift + A`**) untuk membuka halaman login admin secara rahasia!
    * Masuk menggunakan username `admin` dan password `password123`.
    * Tunjukkan visualisasi **Statistik Pendaftar** & **Total Pendapatan** yang langsung bertambah setelah pendaftaran baru berhasil diselesaikan di langkah sebelumnya.
    * Lakukan pengujian CRUD: coba edit salah satu data tiket pendaftar (misal mengubah status pembayaran atau kategori) dan hapus satu data tiket pendaftar menggunakan tombol aksi interaktif.

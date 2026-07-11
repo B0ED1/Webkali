@@ -91,8 +91,11 @@ try {
                 password VARCHAR(255) NOT NULL
             );";
             $pdo->exec($sqlAdmin);
+        }
 
-            // Menambahkan akun admin bawaan (Username: admin, Password: password123)
+        // Pengaman: Jika tabel admin kosong, tambahkan admin bawaan
+        $adminCount = $pdo->query("SELECT COUNT(*) FROM admin")->fetchColumn();
+        if ($adminCount == 0) {
             $username = 'admin';
             $hashedPassword = password_hash('password123', PASSWORD_DEFAULT);
             $stmtAdmin = $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)");
@@ -160,8 +163,11 @@ try {
                 password VARCHAR(255) NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; ";
             $pdo->exec($sqlAdmin);
+        }
 
-            // Menambahkan akun admin bawaan (Username: admin, Password: password123)
+        // Pengaman: Jika tabel admin kosong, tambahkan admin bawaan
+        $adminCount = $pdo->query("SELECT COUNT(*) FROM admin")->fetchColumn();
+        if ($adminCount == 0) {
             $username = 'admin';
             $hashedPassword = password_hash('password123', PASSWORD_DEFAULT);
             $stmtAdmin = $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)");

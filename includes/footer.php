@@ -2,7 +2,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
-                    <div class="d-flex align-items-center mb-3">
+                    <div class="d-flex align-items-center mb-3 cursor-pointer" id="footer-brand-logo" style="user-select: none;">
                         <i class="fa-solid fa-compact-disc text-info me-2 fs-4"></i>
                         <span class="fw-bold text-white fs-4" style="font-family: 'Outfit', sans-serif;">AidFest</span>
                     </div>
