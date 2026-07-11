@@ -1,0 +1,153 @@
+# Dokumentasi Proyek Akhir: AidFest 2026 (MusicFest CRUD)
+
+Dokumentasi ini disusun untuk mempermudah pemahaman, instalasi, pengujian, serta bahan presentasi Ujian Akhir Semester (UAS) Praktikum Pemrograman Web.
+
+---
+
+## 1. Deskripsi Proyek
+**AidFest 2026** adalah aplikasi web manajemen pendaftaran dan penjualan tiket festival musik internasional berbasis **Native PHP** dan **MySQL/PostgreSQL (PDO)**. Aplikasi ini dirancang untuk menangani alur pendaftaran pengunjung (*Create*), verifikasi status tiket (*Read*), penyesuaian detail tiket oleh admin (*Update*), serta pembatalan pendaftaran (*Delete*), sehingga memenuhi kriteria fungsionalitas CRUD secara penuh dan responsif.
+
+### Target Pengguna:
+1. **Pembeli Tiket (Client-Side):** Melakukan pemesanan tiket secara mandiri, memilih kategori dan paket hari, menyelesaikan checkout pembayaran simulasi, serta mencari dan mencetak E-Ticket virtual.
+2. **Administrator (Admin Panel):** Mengelola seluruh pendaftaran tiket festival, memantau metrik pendaftaran secara langsung (real-time stats & revenue), menyunting detail status pemesan, serta menghapus pendaftaran yang tidak valid.
+
+---
+
+## 2. Jajaran Teknologi (Tech Stack)
+* **Backend:** Native PHP (dengan PDO untuk perlindungan terhadap SQL Injection).
+* **Database:** MySQL (Lokal XAMPP) / PostgreSQL (Dukungan database cloud Supabase).
+* **Frontend:** HTML5, CSS3 (Vanilla dengan visual premium), Bootstrap 5 (CSS Framework), FontAwesome 6 (Ikon), Outfit (Google Fonts).
+* **Fitur Interaktif:** JavaScript (Vanilla JS untuk validasi form real-time dan logika sinkronisasi).
+
+---
+
+## 3. Struktur Database
+Database default bernama `db_aidfest` memiliki dua tabel utama dengan relasi operasional:
+
+### A. Tabel `admin` (Autentikasi Pengelola)
+Tabel ini digunakan untuk menyimpan data administrator agar panel admin terlindungi.
+```sql
+CREATE TABLE admin (
+    id_admin INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+```
+
+### B. Tabel `pendaftaran_tiket` (Data Transaksi Tiket)
+Tabel ini merekam semua informasi pesanan, status pembayaran, dan rincian metode bayar.
+```sql
+CREATE TABLE pendaftaran_tiket (
+    id_tiket INT AUTO_INCREMENT PRIMARY KEY,
+    nama_pemesan VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    kategori_tiket ENUM('Reguler', 'VIP', 'VVIP') NOT NULL,
+    paket_hari ENUM('Day 1', 'Day 2', '2-Day Pass') DEFAULT '2-Day Pass',
+    status_pembayaran ENUM('Pending', 'Lunas', 'Batal') DEFAULT 'Pending',
+    metode_pembayaran VARCHAR(50) DEFAULT NULL,
+    kode_pembayaran VARCHAR(50) DEFAULT NULL,
+    tanggal_pesan DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## 4. Struktur File Proyek
+Aplikasi diorganisasikan secara modular untuk mempermudah pemeliharaan kode:
+```text
+Webkali/
+│
+├── config/
+│   └── database.php         # Inisialisasi PDO, seeding database awal & migrasi otomatis
+│
+├── database/
+│   └── schema.sql           # File dump SQL untuk impor database manual
+│
+├── includes/
+│   ├── functions.php        # Fungsi helper terpusat (tarif harga, CRUD db, format indo)
+│   ├── header.php           # Navbar modern dengan glassmorphism & status sesi login
+│   └── footer.php           # Kaki halaman dan pemanggilan JS global
+│
+├── assets/
+│   ├── css/
+│   │   └── style.css        # Desain visual premium (gradasi, stat-cards, ticket-design)
+│   └── js/
+│       └── main.js          # JS validasi, alert auto-fade, dan sinkronisasi VVIP
+│
+├── admin/
+│   ├── login.php            # Halaman login administrator
+│   ├── logout.php           # Proses logout & penghancuran session admin
+│   ├── index.php            # Dashboard utama admin (statistik visual & tabel CRUD)
+│   ├── edit.php             # Form penyuntingan data tiket pembeli
+│   └── delete.php           # Skrip pemrosesan hapus data tiket
+│
+├── index.php                # Portal pembeli (Hero, lineup artis, tarif, pencarian tiket)
+├── create.php               # Formulir pemesanan tiket untuk pembeli / admin
+└── payment.php              # Halaman simulasi checkout pembayaran tiket
+```
+
+---
+
+## 5. Fitur-Fitur Utama Proyek (Bahan Presentasi)
+Saat mempresentasikan aplikasi ini di depan penguji/dosen, berikut adalah poin penting yang dapat ditonjolkan:
+
+1. **Sentralisasi Logika Harga (*Single Source of Truth*):**
+   Tarif harga tiket didefinisikan secara terpusat pada file [functions.php](file:///c:/xampp/htdocs/Webkali/includes/functions.php) di fungsi `get_ticket_price()`. Perubahan tarif akan otomatis mengubah tampilan di landing page dan nominal tagihan di halaman checkout pembayaran secara sinkron.
+2. **Dashboard Statistik & Revenue Terintegrasi:**
+   Panel admin menampilkan kartu ringkasan data yang dihitung langsung dari database secara dinamis:
+   * Total Pendaftar keseluruhan.
+   * **Total Pendapatan Bersih** (dihitung hanya dari pesanan yang berstatus **Lunas**).
+   * Jumlah pendaftar per kategori tiket (Reguler, VIP, VVIP).
+3. **Logika Sinkronisasi Form VVIP (Dynamic Form UX):**
+   Sesuai aturan bisnis, tiket VVIP hanya tersedia dalam bentuk *2-Day Pass* (Terusan). Di halaman pemesanan, JavaScript secara dinamis mendeteksi pilihan kategori. Jika VVIP dipilih, opsi harian (Day 1 / Day 2) akan langsung dinonaktifkan di frontend untuk mencegah kesalahan input pengguna sebelum diserahkan ke backend.
+4. **Desain E-Ticket Siap Cetak (Print Friendly CSS):**
+   E-Ticket virtual dilengkapi dengan barcode simulasi dan tata letak eksklusif. Ketika pembeli menekan tombol **"Cetak E-Ticket"**, stylesheet media cetak `@media print` akan menyembunyikan elemen navigasi, tombol, dan footer secara otomatis, menyisakan kartu tiket yang bersih dan presisi untuk dicetak atau disimpan sebagai PDF.
+5. **Akses Login Admin Tersembunyi (Easter Egg Security):**
+   Untuk menjaga keamanan, tombol "Login Admin" sengaja dihilangkan dari menu navigasi utama agar tidak diklik oleh pengunjung biasa. Namun, admin dapat mengakses halaman login dengan cara **klik dua kali (double-click) pada logo CD atau nama "AidFest" di navbar**. Logika relative path di JavaScript memastikan fitur ini bekerja di domain hosting mana pun.
+
+---
+
+## 6. Panduan Instalasi (Local Setup)
+
+1. **Siapkan Folder Proyek:**
+   Salin folder `Webkali` ke direktori root server lokal Anda (misal `C:\xampp\htdocs\` untuk XAMPP).
+2. **Import Database:**
+   * Aktifkan Apache dan MySQL di XAMPP Control Panel.
+   * Buka browser dan akses `http://localhost/phpmyadmin/`.
+   * Buat database baru bernama `db_aidfest`.
+   * Pilih menu **Import**, lalu pilih file `database/schema.sql` dan klik **Go**.
+3. **Konfigurasi database.php:**
+   * Buka file [config/database.php](file:///c:/xampp/htdocs/Webkali/config/database.php).
+   * Pada baris ke-7, pastikan driver diatur ke `'mysql'` untuk database lokal:
+     ```php
+     $db_driver = 'mysql';
+     ```
+4. **Jalankan Aplikasi:**
+   * Buka browser dan akses alamat: `http://localhost/Webkali/index.php`.
+
+---
+
+## 7. Kredensial Akses Admin (Default)
+Untuk login ke halaman administrator (`http://localhost/Webkali/admin/login.php`):
+* **Username:** `admin`
+* **Password:** `password123`
+
+---
+
+## 8. Panduan Alur Presentasi Demo Aplikasi (Tips UAS)
+
+1. **Perkenalan:** Jelaskan nama proyek (AidFest 2026) dan latar belakang pembuatannya sebagai aplikasi berbasis PHP Native yang responsif.
+2. **Demo Sisi Pembeli:** 
+   * Tunjukkan halaman beranda, lineup artis global, dan tabel kategori tiket dengan tarif harga terbaru yang premium.
+   * Lakukan pemesanan tiket baru di menu **Pesan Tiket**. Tunjukkan interaksi ketika memilih **VVIP** yang secara otomatis mengunci hari ke **2-Day Pass**.
+   * Isi form dengan nama dan email baru, kemudian submit.
+   * Anda akan masuk ke halaman **Checkout Pembayaran**. Pilih metode pembayaran, lalu selesaikan transaksi dengan menekan **Bayar Sekarang**.
+   * Tunjukkan bahwa E-Ticket virtual langsung aktif dengan status **Lunas**, lengkap dengan kode transaksi acak, barcode, dan tombol cetak.
+3. **Demo Sisi Administrator:**
+   * Jelaskan bahwa link login sengaja disembunyikan dari navbar untuk meningkatkan keamanan web.
+   * Lakukan **Double-Click (Klik 2 Kali)** pada logo CD berputar di navbar untuk membuka halaman login admin secara ajaib!
+   * Masuk menggunakan username `admin` dan password `password123`.
+   * Tunjukkan visualisasi **Statistik Pendaftar** & **Total Pendapatan** yang langsung bertambah setelah pendaftaran baru berhasil diselesaikan di langkah sebelumnya.
+   * Lakukan pengujian CRUD: coba edit salah satu data tiket pendaftar (misal mengubah status pembayaran atau kategori) dan hapus satu data tiket pendaftar menggunakan tombol aksi interaktif.
+   * Tunjukkan fungsionalitas fitur **Pencarian Data** yang dapat menyaring data di tabel admin secara instan.
+4. **Penutup:** Jelaskan mengenai kebersihan struktur kode (*clean code*) dengan dokumentasi ini.

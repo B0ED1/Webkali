@@ -59,12 +59,6 @@ if (!isset($base_path)) {
                                 <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
                             </a>
                         </li>
-                    <?php else: ?>
-                        <li class="nav-item me-3">
-                            <a class="nav-link text-white-50 px-3" href="<?php echo $base_path; ?>admin/login.php" id="nav-link-login">
-                                <i class="fa-solid fa-right-to-bracket me-1"></i>Login
-                            </a>
-                        </li>
                     <?php endif; ?>
 
                     <li class="nav-item">

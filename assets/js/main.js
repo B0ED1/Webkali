@@ -3,7 +3,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Konfirmasi Hapus Data
+    // Konfirmasi Hapus Data
     const deleteButtons = document.querySelectorAll('.btn-delete-confirm');
     deleteButtons.forEach(button => {
         button.addEventListener('click', function (e) {
@@ -11,22 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const deleteUrl = this.getAttribute('href');
             const pemesanName = this.getAttribute('data-name') || 'pemesan ini';
             
-            // Menggunakan confirm bawaan dengan pesan interaktif
             if (confirm(`Apakah Anda yakin ingin menghapus tiket atas nama "${pemesanName}" secara permanen? Action ini tidak dapat dibatalkan.`)) {
                 window.location.href = deleteUrl;
             }
         });
     });
 
-    // 2. Validasi Form Real-time (Bootstrap custom validation)
+    // Validasi Form
     const forms = document.querySelectorAll('.needs-validation');
-    
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
-            // Validasi format email secara custom
-            const emailInput = form.querySelector('input[type="email"]');
             const nameInput = form.querySelector('input[name="nama_pemesan"]');
-            
             let customValid = true;
 
             if (nameInput && nameInput.value.trim().length < 3) {
@@ -45,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, false);
     });
 
-    // 3. Efek Input Focus Glow
+    // Efek Focus Input
     const inputs = document.querySelectorAll('.form-control, .form-select');
     inputs.forEach(input => {
         input.addEventListener('focus', () => {
@@ -58,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. Auto-fade alert banners after 5 seconds
+    // Auto-fade alert banners
     const alerts = document.querySelectorAll('.alert-aidfest');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -68,4 +63,40 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => alert.remove(), 600);
         }, 5000);
     });
+
+    // Sinkronisasi Kategori VVIP & Pilihan Hari
+    const kategoriSelect = document.getElementById('kategori_tiket');
+    const paketHariSelect = document.getElementById('paket_hari');
+    if (kategoriSelect && paketHariSelect) {
+        const updatePackageOptions = () => {
+            if (kategoriSelect.value === 'VVIP') {
+                paketHariSelect.value = '2-Day Pass';
+                Array.from(paketHariSelect.options).forEach(option => {
+                    if (option.value !== '2-Day Pass') {
+                        option.disabled = true;
+                    }
+                });
+            } else {
+                Array.from(paketHariSelect.options).forEach(option => {
+                    option.disabled = false;
+                });
+            }
+        };
+        kategoriSelect.addEventListener('change', updatePackageOptions);
+        updatePackageOptions();
+    }
+
+    // Easter Egg: Double-click brand logo untuk login admin
+    const brandLogo = document.getElementById('nav-brand-logo');
+    if (brandLogo) {
+        brandLogo.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            const isAdminPath = window.location.pathname.includes('/admin/');
+            if (isAdminPath) {
+                window.location.href = 'login.php';
+            } else {
+                window.location.href = 'admin/login.php';
+            }
+        });
+    }
 });

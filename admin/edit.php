@@ -1,34 +1,24 @@
 <?php
-// Memulai session untuk notifikasi alert
 session_start();
-
-// Memuat file fungsi helper dari subfolder
 require_once '../includes/functions.php';
-
-// Membatasi akses halaman hanya untuk admin yang login
 require_admin_login();
 
-// Membaca ID tiket yang akan diedit dari parameter GET
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Validasi apakah ID valid
 if ($id <= 0) {
     $_SESSION['error'] = "ID tiket tidak valid atau tidak disertakan.";
     header("Location: index.php");
     exit();
 }
 
-// 1. Mengambil data tiket lama dari database berdasarkan ID
 $ticket = get_ticket_by_id($pdo, $id);
 
-// Jika data tiket tidak ditemukan di database
 if (!$ticket) {
     $_SESSION['error'] = "Data tiket dengan ID tersebut tidak ditemukan.";
     header("Location: index.php");
     exit();
 }
 
-// Mengisi variabel form dengan data lama sebagai default
 $nama_pemesan = $ticket['nama_pemesan'];
 $email = $ticket['email'];
 $kategori_tiket = $ticket['kategori_tiket'];
@@ -37,7 +27,6 @@ $status_pembayaran = $ticket['status_pembayaran'];
 $metode_pembayaran = $ticket['metode_pembayaran'] ?? '';
 $errors = [];
 
-// 2. Memproses data form saat disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pemesan = trim($_POST['nama_pemesan']);
     $email = trim($_POST['email']);
@@ -46,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status_pembayaran = isset($_POST['status_pembayaran']) ? $_POST['status_pembayaran'] : 'Pending';
     $metode_pembayaran = isset($_POST['metode_pembayaran']) ? trim($_POST['metode_pembayaran']) : '';
 
-    // Validasi input
     if (empty($nama_pemesan)) {
         $errors['nama_pemesan'] = "Nama lengkap wajib diisi.";
     } elseif (strlen($nama_pemesan) < 3) {
@@ -67,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['paket_hari'] = "Pilihan hari tiket tidak valid.";
     }
 
-    // Validasi aturan: VVIP hanya untuk 2-Day Pass
+    // Validasi VVIP hanya untuk 2-Day Pass
     if ($kategori_tiket === 'VVIP' && $paket_hari !== '2-Day Pass') {
         $errors['paket_hari'] = "Tiket kategori VVIP hanya tersedia untuk akses penuh Terusan 2 Hari (2-Day Pass).";
     }
@@ -76,16 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['status_pembayaran'] = "Status pembayaran tidak valid.";
     }
 
-    // Validasi email unik (kecuali milik data tiket ini sendiri)
     if (empty($errors)) {
         if (is_email_registered($pdo, $email, $id)) {
             $errors['email'] = "Alamat email ini sudah terdaftar untuk pemesan tiket lainnya.";
         }
     }
 
-    // 3. Update database jika tidak ada error
     if (empty($errors)) {
-        // Tentukan kode pembayaran & metode jika di-set Lunas oleh admin
         $kode_pembayaran = $ticket['kode_pembayaran'];
         if ($status_pembayaran === 'Lunas') {
             if (empty($kode_pembayaran)) {
@@ -95,13 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $metode_pembayaran = 'Manual Admin';
             }
         } else {
-            // Hapus metode dan kode transaksi jika status di-reset ke Pending/Batal
             $metode_pembayaran = null;
             $kode_pembayaran = null;
         }
 
         if (update_ticket($pdo, $id, $nama_pemesan, $email, $kategori_tiket, $paket_hari, $status_pembayaran, $metode_pembayaran, $kode_pembayaran)) {
-            // Set notifikasi sukses
             $_SESSION['success'] = "Data tiket atas nama <strong>" . htmlspecialchars($nama_pemesan) . "</strong> berhasil diperbarui!";
             header("Location: index.php");
             exit();
@@ -111,10 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Set base path ke folder root karena file-file asset ada di root
 $base_path = '../';
-
-// Load Header Global dari subfolder
 include_once '../includes/header.php';
 ?>
 

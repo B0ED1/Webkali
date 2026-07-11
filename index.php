@@ -68,12 +68,10 @@ include_once 'includes/header.php';
         </ul>
     </div>
 
-    <!-- Tab Panels -->
     <div class="tab-content" id="lineupTabContent">
         <!-- Day 1 Panel -->
         <div class="tab-pane fade show active" id="day1-pane" role="tabpanel" aria-labelledby="day1-tab" tabindex="0">
             <div class="row g-4">
-                <!-- Artist 1 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/736x/0c/f8/97/0cf8976e6af05f582576c7d0aeef84c3.jpg" class="img-fluid rounded" alt="">
@@ -83,7 +81,6 @@ include_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <!-- Artist 2 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/1200x/fb/2c/29/fb2c292c50595fd5a2ba4b0b65300f29.jpg" class="img-fluid rounded" alt="">
@@ -93,7 +90,6 @@ include_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <!-- Artist 3 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/1200x/19/b3/95/19b395e4e347a49626283b85ffbf9ce4.jpg" class="img-fluid rounded" alt="">
@@ -103,7 +99,6 @@ include_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <!-- Artist 4 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/736x/39/3a/73/393a73e84529335efd222ead358c8662.jpg" class="img-fluid rounded" alt="">
@@ -119,7 +114,6 @@ include_once 'includes/header.php';
         <!-- Day 2 Panel -->
         <div class="tab-pane fade" id="day2-pane" role="tabpanel" aria-labelledby="day2-tab" tabindex="0">
             <div class="row g-4">
-                <!-- Artist 5 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/736x/d2/b2/1f/d2b21f270f752d5932e1cd484459b980.jpg" class="img-fluid rounded" alt="">
@@ -129,7 +123,6 @@ include_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <!-- Artist 6 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/736x/96/05/5a/96055aa0294874cc1f3cdcc67f29f547.jpg" class="img-fluid rounded" style="object-position: center 15%;" alt="Olivia Rodrigo">
@@ -139,7 +132,6 @@ include_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <!-- Artist 7 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/1200x/ce/ff/6f/ceff6fdfd08a7d293587210a8dd3c5b3.jpg" class="img-fluid rounded" style="object-position: center 10%;" alt="NIKI">
@@ -149,7 +141,6 @@ include_once 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <!-- Artist 8 -->
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="artist-card">
                         <img src="https://i.pinimg.com/736x/73/9a/09/739a09b8df187c87b6df5e5416d101fa.jpg" class="img-fluid rounded" style="object-position: center 15%;" alt="Rex Orange County">
@@ -187,13 +178,11 @@ include_once 'includes/header.php';
         </ul>
     </div>
 
-    <!-- Tab Panels for Pricing -->
     <div class="tab-content" id="pricingTabContent">
         
         <!-- Single-Day Pass Pane -->
         <div class="tab-pane fade show active" id="single-pass-pane" role="tabpanel" aria-labelledby="single-pass-tab" tabindex="0">
             <div class="row g-4 align-items-stretch justify-content-center">
-                <!-- Reguler Harian -->
                 <div class="col-md-5 col-lg-4">
                     <div class="pricing-card p-4">
                         <div class="mb-4">
@@ -202,7 +191,7 @@ include_once 'includes/header.php';
                             <p class="text-muted" style="font-size: 0.9rem;">Akses masuk area festival utama selama 1 hari pilihan Anda.</p>
                         </div>
                         <div class="mb-4 mt-auto">
-                            <h2 class="fw-bold mb-0 text-slate-800">Rp 2.500.000</h2>
+                            <h2 class="fw-bold mb-0 text-slate-800">Rp 7.500.000</h2>
                             <span class="text-muted" style="font-size: 0.8rem;">per tiket / hari</span>
                         </div>
                         <ul class="list-unstyled mb-4 text-slate-600" style="font-size: 0.9rem; line-height: 1.8;">
@@ -218,7 +207,6 @@ include_once 'includes/header.php';
                     </div>
                 </div>
                 
-                <!-- VIP Harian -->
                 <div class="col-md-5 col-lg-4">
                     <div class="pricing-card featured p-4">
                         <div class="mb-4">
@@ -227,7 +215,7 @@ include_once 'includes/header.php';
                             <p class="text-muted" style="font-size: 0.9rem;">Area menonton terbaik di barisan depan selama 1 hari.</p>
                         </div>
                         <div class="mb-4 mt-auto">
-                            <h2 class="fw-bold mb-0 text-indigo">Rp 7.000.000</h2>
+                            <h2 class="fw-bold mb-0 text-indigo">Rp 16.500.000</h2>
                             <span class="text-muted" style="font-size: 0.8rem;">per tiket / hari</span>
                         </div>
                         <ul class="list-unstyled mb-4 text-slate-600" style="font-size: 0.9rem; line-height: 1.8;">
@@ -249,7 +237,6 @@ include_once 'includes/header.php';
         <!-- 2-Day Pass Pane -->
         <div class="tab-pane fade" id="two-pass-pane" role="tabpanel" aria-labelledby="two-pass-tab" tabindex="0">
             <div class="row g-4 align-items-stretch justify-content-center">
-                <!-- Reguler 2-Day -->
                 <div class="col-md-4">
                     <div class="pricing-card p-4">
                         <div class="mb-4">
@@ -258,8 +245,8 @@ include_once 'includes/header.php';
                             <p class="text-muted" style="font-size: 0.9rem;">Akses standar penuh selama 2 hari festival.</p>
                         </div>
                         <div class="mb-4 mt-auto">
-                            <h2 class="fw-bold mb-0 text-slate-800">Rp 4.500.000</h2>
-                            <span class="text-muted" style="font-size: 0.8rem;">hemat Rp 500.000!</span>
+                            <h2 class="fw-bold mb-0 text-slate-800">Rp 14.000.000</h2>
+                            <span class="text-muted" style="font-size: 0.8rem;">hemat Rp 1.000.000!</span>
                         </div>
                         <ul class="list-unstyled mb-4 text-slate-600" style="font-size: 0.9rem; line-height: 1.8;">
                             <li><i class="fa-solid fa-check text-success me-2"></i> Akses masuk area festival penuh 2 hari (Day 1 & Day 2)</li>
@@ -270,7 +257,6 @@ include_once 'includes/header.php';
                     </div>
                 </div>
                 
-                <!-- VIP 2-Day -->
                 <div class="col-md-4">
                     <div class="pricing-card featured p-4">
                         <div class="mb-4">
@@ -279,7 +265,7 @@ include_once 'includes/header.php';
                             <p class="text-muted" style="font-size: 0.9rem;">Fasilitas VIP penuh selama 2 hari festival.</p>
                         </div>
                         <div class="mb-4 mt-auto">
-                            <h2 class="fw-bold mb-0 text-indigo">Rp 12.000.000</h2>
+                            <h2 class="fw-bold mb-0 text-indigo">Rp 32.500.000</h2>
                         </div>
                         <ul class="list-unstyled mb-4 text-slate-600" style="font-size: 0.9rem; line-height: 1.8;">
                             <li><i class="fa-solid fa-check text-indigo me-2"></i> Area menonton Front Row Section selama 2 hari berturut-turut</li>
@@ -292,7 +278,6 @@ include_once 'includes/header.php';
                     </div>
                 </div>
                 
-                <!-- VVIP 2-Day -->
                 <div class="col-md-4">
                     <div class="pricing-card p-4">
                         <div class="mb-4">
@@ -301,7 +286,7 @@ include_once 'includes/header.php';
                             <p class="text-muted" style="font-size: 0.9rem;">Akses belakang panggung dan fasilitas lounge premium.</p>
                         </div>
                         <div class="mb-4 mt-auto">
-                            <h2 class="fw-bold mb-0 text-slate-800">Rp 35.000.000</h2>
+                            <h2 class="fw-bold mb-0 text-slate-800">Rp 85.000.000</h2>
                             <span class="text-muted" style="font-size: 0.8rem;">Exclusive 2-Day Access</span>
                         </div>
                         <ul class="list-unstyled mb-4 text-slate-600" style="font-size: 0.9rem; line-height: 1.8;">

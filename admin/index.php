@@ -1,42 +1,29 @@
 <?php
-// Memulai session untuk alert info
 session_start();
-
-// Memuat file fungsi helper dari subfolder
 require_once '../includes/functions.php';
-
-// Membatasi akses halaman hanya untuk admin yang login
 require_admin_login();
 
-// Membaca kata kunci pencarian jika ada
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-// Mengambil seluruh data pendaftaran tiket (atau yang difilter kata kunci)
 $pendaftaran = get_all_tickets($pdo, $search);
-
-// Set base path ke folder root karena file-file asset ada di root
+$stats = get_ticket_statistics($pdo);
 $base_path = '../';
 
-// Load Header Global dari subfolder
 include_once '../includes/header.php';
 ?>
 
 <div class="container my-5">
-    <!-- Header Dashboard -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
             <h2 class="fw-bold text-slate-800 mb-1"><i class="fa-solid fa-gauge text-indigo me-2"></i>Dashboard Admin</h2>
             <p class="text-muted mb-0">Kelola dan pantau seluruh pendaftaran tiket festival AidFest 2026.</p>
         </div>
         <div>
-            <!-- Tombol Tambah Pemesan - merujuk ke create.php di root -->
             <a href="../create.php" class="btn btn-premium-primary" id="btn-tambah-pemesan">
                 <i class="fa-solid fa-plus me-2"></i>Tambah Pemesan Baru
             </a>
         </div>
     </div>
 
-    <!-- Banner Notifikasi Sukses/Error jika ada -->
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success alert-aidfest d-flex align-items-center mb-4" role="alert">
             <i class="fa-solid fa-circle-check fs-5 me-2"></i>
@@ -50,7 +37,74 @@ include_once '../includes/header.php';
         </div>
     <?php endif; ?>
 
-    <!-- Card Wrapper Utama -->
+    <div class="row g-4 mb-4">
+        <div class="col-md col-sm-6">
+            <div class="stat-card total p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block mb-1" style="font-size: 0.85rem;">Total Pendaftar</span>
+                        <h4 class="fw-bold mb-0 text-slate-800"><?php echo $stats['total']; ?></h4>
+                    </div>
+                    <div class="stat-icon total" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md col-sm-6">
+            <div class="stat-card revenue p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block mb-1" style="font-size: 0.85rem;">Pendapatan (Lunas)</span>
+                        <h4 class="fw-bold mb-0 text-slate-800">Rp <?php echo number_format($stats['pendapatan'], 0, ',', '.'); ?></h4>
+                    </div>
+                    <div class="stat-icon revenue" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md col-sm-4">
+            <div class="stat-card reguler p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block mb-1" style="font-size: 0.85rem;">Reguler</span>
+                        <h4 class="fw-bold mb-0 text-slate-800"><?php echo $stats['reguler']; ?></h4>
+                    </div>
+                    <div class="stat-icon reguler" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-ticket"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md col-sm-4">
+            <div class="stat-card vip p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block mb-1" style="font-size: 0.85rem;">VIP</span>
+                        <h4 class="fw-bold mb-0 text-slate-800"><?php echo $stats['vip']; ?></h4>
+                    </div>
+                    <div class="stat-icon vip" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md col-sm-4">
+            <div class="stat-card vvip p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block mb-1" style="font-size: 0.85rem;">VVIP</span>
+                        <h4 class="fw-bold mb-0 text-slate-800"><?php echo $stats['vvip']; ?></h4>
+                    </div>
+                    <div class="stat-icon vvip" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="bg-white rounded-3 border shadow-sm p-4">
         
         <!-- Filter Pencarian -->

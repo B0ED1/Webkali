@@ -246,18 +246,49 @@ function is_email_registered($pdo, $email, $exclude_id = 0) {
 }
 
 /**
- * Mengambil data statistik jumlah tiket berdasarkan kategorinya
+ * Mendapatkan tarif harga tiket berdasarkan kategori dan paket hari
+ * @param string $kategori
+ * @param string $paket_hari
+ * @return int
+ */
+function get_ticket_price($kategori, $paket_hari) {
+    if ($paket_hari === '2-Day Pass') {
+        switch ($kategori) {
+            case 'Reguler': return 14000000;
+            case 'VIP': return 32500000;
+            case 'VVIP': return 85000000;
+        }
+    } else {
+        switch ($kategori) {
+            case 'Reguler': return 7500000;
+            case 'VIP': return 16500000;
+        }
+    }
+    return 0;
+}
+
+/**
+ * Mengambil data statistik jumlah tiket dan pendapatan
  * @param PDO $pdo
  * @return array
  */
 function get_ticket_statistics($pdo) {
     try {
-        return [
+        $stats = [
             'total' => $pdo->query("SELECT COUNT(*) FROM pendaftaran_tiket")->fetchColumn(),
             'reguler' => $pdo->query("SELECT COUNT(*) FROM pendaftaran_tiket WHERE kategori_tiket = 'Reguler'")->fetchColumn(),
             'vip' => $pdo->query("SELECT COUNT(*) FROM pendaftaran_tiket WHERE kategori_tiket = 'VIP'")->fetchColumn(),
             'vvip' => $pdo->query("SELECT COUNT(*) FROM pendaftaran_tiket WHERE kategori_tiket = 'VVIP'")->fetchColumn(),
+            'pendapatan' => 0
         ];
+
+        $stmt = $pdo->query("SELECT kategori_tiket, paket_hari FROM pendaftaran_tiket WHERE status_pembayaran = 'Lunas'");
+        $tickets = $stmt->fetchAll();
+        foreach ($tickets as $t) {
+            $stats['pendapatan'] += get_ticket_price($t['kategori_tiket'], $t['paket_hari']);
+        }
+
+        return $stats;
     } catch (PDOException $e) {
         die("Gagal memuat statistik dashboard: " . $e->getMessage());
     }

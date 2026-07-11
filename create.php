@@ -1,11 +1,7 @@
 <?php
-// Memulai session untuk notifikasi alert
 session_start();
-
-// Memuat file fungsi helper
 require_once 'includes/functions.php';
 
-// Inisialisasi variabel form default
 $nama_pemesan = '';
 $email = '';
 $kategori_tiket = isset($_GET['kategori']) && in_array($_GET['kategori'], ['Reguler', 'VIP', 'VVIP']) ? $_GET['kategori'] : 'Reguler';
@@ -14,20 +10,17 @@ $status_pembayaran = 'Pending';
 $metode_pembayaran = '';
 $errors = [];
 
-// Memproses data form saat disubmit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_pemesan = trim($_POST['nama_pemesan']);
     $email = trim($_POST['email']);
     $kategori_tiket = isset($_POST['kategori_tiket']) ? $_POST['kategori_tiket'] : 'Reguler';
     $paket_hari = isset($_POST['paket_hari']) ? $_POST['paket_hari'] : '2-Day Pass';
     
-    // Status & metode khusus jika diinput oleh admin
     if (is_admin_logged_in()) {
         $status_pembayaran = isset($_POST['status_pembayaran']) ? $_POST['status_pembayaran'] : 'Pending';
         $metode_pembayaran = isset($_POST['metode_pembayaran']) ? trim($_POST['metode_pembayaran']) : '';
     }
 
-    // 1. Validasi Input
     if (empty($nama_pemesan)) {
         $errors['nama_pemesan'] = "Nama lengkap wajib diisi.";
     } elseif (strlen($nama_pemesan) < 3) {
@@ -48,21 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['paket_hari'] = "Pilihan hari tiket tidak valid.";
     }
 
-    // Validasi aturan: VVIP hanya untuk 2-Day Pass
+    // Validasi VVIP hanya untuk 2-Day Pass
     if ($kategori_tiket === 'VVIP' && $paket_hari !== '2-Day Pass') {
         $errors['paket_hari'] = "Tiket kategori VVIP hanya tersedia untuk akses penuh Terusan 2 Hari (2-Day Pass).";
     }
 
-    // 2. Cek apakah email sudah terdaftar
     if (empty($errors)) {
         if (is_email_registered($pdo, $email)) {
             $errors['email'] = "Alamat email ini sudah terdaftar untuk pemesanan tiket.";
         }
     }
 
-    // 3. Simpan ke database jika valid
     if (empty($errors)) {
-        // Tentukan kode pembayaran acak jika status langsung Lunas oleh Admin
         $kode_pembayaran = ($status_pembayaran === 'Lunas') ? 'TRX-' . mt_rand(10000, 99999) : null;
         $final_metode = ($status_pembayaran === 'Lunas') ? (empty($metode_pembayaran) ? 'Manual Admin' : $metode_pembayaran) : null;
 
@@ -83,10 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Set base path
 $base_path = '';
-
-// Load Header Global
 include_once 'includes/header.php';
 ?>
 

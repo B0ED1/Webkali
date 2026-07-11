@@ -34,25 +34,8 @@ if ($ticket['status_pembayaran'] === 'Lunas') {
     exit();
 }
 
-// Menghitung nominal harga tiket berdasarkan kategori dan paket hari
-$harga = 0;
-if ($ticket['paket_hari'] === '2-Day Pass') {
-    if ($ticket['kategori_tiket'] === 'Reguler') {
-        $harga = 4500000;
-    } elseif ($ticket['kategori_tiket'] === 'VIP') {
-        $harga = 12000000;
-    } elseif ($ticket['kategori_tiket'] === 'VVIP') {
-        $harga = 35000000;
-    }
-} else { // Day 1 atau Day 2
-    if ($ticket['kategori_tiket'] === 'Reguler') {
-        $harga = 2500000;
-    } elseif ($ticket['kategori_tiket'] === 'VIP') {
-        $harga = 7000000;
-    }
-}
+$harga = get_ticket_price($ticket['kategori_tiket'], $ticket['paket_hari']);
 
-// Memproses pembayaran tiruan saat disubmit
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $metode = isset($_POST['metode_pembayaran']) ? trim($_POST['metode_pembayaran']) : '';
@@ -60,12 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($metode)) {
         $error = "Silakan pilih salah satu metode pembayaran.";
     } else {
-        // Generate kode transaksi tiruan (contoh: TRX-84321)
         $kode_pembayaran = 'TRX-' . mt_rand(10000, 99999);
         
-        // Memperbarui status pembayaran menjadi Lunas di database
         if (update_payment_status($pdo, $id, 'Lunas', $metode, $kode_pembayaran)) {
-            // Hapus session booking sementara jika ada
             if (isset($_SESSION['last_booking_id'])) {
                 unset($_SESSION['last_booking_id']);
             }
@@ -97,16 +77,13 @@ include_once 'includes/header.php';
         </nav>
 
         <div class="form-card">
-            <!-- Header Ringkasan Pembayaran -->
             <div class="form-card-header" style="background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);">
                 <span class="badge bg-warning text-dark px-3 py-1 rounded-pill mb-2"><i class="fa-solid fa-clock-rotate-left me-1"></i>Menunggu Pembayaran</span>
                 <h3 class="fw-bold mb-0">Checkout Pembayaran</h3>
                 <p class="mb-0 opacity-75 fs-6 mt-1">Selesaikan pembayaran untuk mengaktifkan E-Ticket Anda.</p>
             </div>
 
-            <!-- Body Checkout -->
             <div class="form-card-body">
-                <!-- Tampilkan Error jika ada -->
                 <?php if ($error): ?>
                     <div class="alert alert-danger alert-aidfest d-flex align-items-center mb-4" role="alert">
                         <i class="fa-solid fa-circle-exclamation fs-5 me-2"></i>
@@ -114,7 +91,7 @@ include_once 'includes/header.php';
                     </div>
                 <?php endif; ?>
 
-                <!-- Rincian Tiket / Detail Billing -->
+                <!-- Detail Tagihan -->
                 <div class="p-3 bg-light rounded-3 mb-4 border">
                     <h6 class="fw-bold text-slate-800 border-bottom pb-2 mb-3"><i class="fa-solid fa-file-invoice-dollar me-2 text-indigo"></i>Rincian Tagihan</h6>
                     
@@ -151,11 +128,9 @@ include_once 'includes/header.php';
                     </div>
                 </div>
 
-                <!-- Form Simulasi Pembayaran -->
                 <form action="payment.php?id=<?php echo $id; ?>" method="POST" id="form-pembayaran">
                     <h6 class="fw-bold text-slate-800 mb-3"><i class="fa-solid fa-credit-card me-2 text-indigo"></i>Pilih Metode Pembayaran</h6>
                     
-                    <!-- Pilihan Transfer Bank -->
                     <div class="mb-3">
                         <div class="form-check p-3 border rounded-3 d-flex align-items-center cursor-pointer mb-2 hover-bg-light">
                             <input class="form-check-input ms-0 me-3" type="radio" name="metode_pembayaran" id="metode_bca" value="Transfer Bank BCA" required>
@@ -173,7 +148,6 @@ include_once 'includes/header.php';
                             </label>
                         </div>
 
-                        <!-- Pilihan E-Wallet -->
                         <div class="form-check p-3 border rounded-3 d-flex align-items-center cursor-pointer mb-2 hover-bg-light">
                             <input class="form-check-input ms-0 me-3" type="radio" name="metode_pembayaran" id="metode_gopay" value="GoPay">
                             <label class="form-check-label w-100 cursor-pointer d-flex align-items-center justify-content-between" for="metode_gopay">
@@ -191,18 +165,16 @@ include_once 'includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Petunjuk Simulasi Pembayaran -->
                     <div class="alert alert-info border-0 bg-light-subtle text-slate-600 mb-4" style="font-size: 0.85rem; border-left: 4px solid #0dcaf0 !important;">
                         <i class="fa-solid fa-info-circle me-1"></i>
                         <strong>Catatan Simulasi:</strong> Halaman ini mensimulasikan sistem pembayaran asli. Pilih metode pembayaran, lalu tekan tombol <strong>Bayar Sekarang</strong> untuk menyelesaikan pembelian Anda.
                     </div>
 
-                    <!-- Tombol Konfirmasi Bayar -->
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-premium-primary py-2 btn-lg fs-6" id="confirm-payment-btn">
                             <i class="fa-solid fa-circle-check me-2"></i>Bayar Sekarang
                         </button>
-                        <a href="home.php" class="btn btn-outline-secondary py-2" id="cancel-payment-btn">
+                        <a href="index.php" class="btn btn-outline-secondary py-2" id="cancel-payment-btn">
                             Bayar Nanti & Kembali
                         </a>
                     </div>
